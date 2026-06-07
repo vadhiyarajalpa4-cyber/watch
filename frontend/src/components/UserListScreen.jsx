@@ -17,10 +17,8 @@ const UserListScreen = () => {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
-            // Fetching with query parameters
             const { data } = await axios.get(`http://localhost:5000/api/users?page=${page}&limit=10`, config);
 
-            // Now data is an object: { users: [...], totalPages: X, currentPage: X }
             setUsers(data.users);
             setTotalPages(data.totalPages);
             setCurrentPage(data.currentPage);
@@ -31,7 +29,6 @@ const UserListScreen = () => {
         }
     };
 
-    // Initial load
     useEffect(() => {
         fetchUsers(1);
     }, []);
@@ -46,12 +43,9 @@ const UserListScreen = () => {
 
                 await axios.delete(`http://localhost:5000/api/users/${id}`, config);
 
-                // Logic to handle page navigation after deletion
                 if (users.length === 1 && currentPage > 1) {
-                    // If this was the only user on the page, move to the previous page
                     fetchUsers(currentPage - 1);
                 } else {
-                    // Otherwise, refresh the current page
                     fetchUsers(currentPage);
                 }
 
@@ -90,7 +84,6 @@ const UserListScreen = () => {
                                     <Mail size={14} className="text-[#D4AF37]" /> {user.email}
                                 </td>
                                 <td className="p-4 text-[11px] text-gray-500 font-sans">
-                                    {/* Try user.createdAt first, if invalid, extract from _id */}
                                     {user.createdAt ? (
                                         new Date(user.createdAt).toLocaleDateString('en-IN', {
                                             day: '2-digit',
@@ -98,7 +91,6 @@ const UserListScreen = () => {
                                             year: 'numeric'
                                         })
                                     ) : (
-                                        // Fallback: Extracting date from the first 8 characters of the ObjectId
                                         new Date(parseInt(user._id.substring(0, 8), 16) * 1000).toLocaleDateString('en-IN', {
                                             day: '2-digit',
                                             month: 'short',

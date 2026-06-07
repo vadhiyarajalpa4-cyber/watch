@@ -28,9 +28,7 @@ exports.register = async (req, res) => {
             isAdmin: isAdmin || false
         });
 
-        // --- 🔔 NEW: CREATE ADMIN NOTIFICATION ---
         try {
-            // Find an Admin to receive the alert
             const admin = await User.findOne({ isAdmin: true });
             if (admin) {
                 await Notification.create({
@@ -103,7 +101,6 @@ exports.login = async (req, res) => {
             { expiresIn: '30d' }
         );
 
-        // --- OPTIONAL: LOGIN ALERT EMAIL ---
         const loginMessage = `
             <div style="font-family: sans-serif; padding: 20px; color: #333;">
                 <p>Hello ${user.name},</p>
@@ -147,12 +144,10 @@ exports.changePassword = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // Check if currentPassword actually exists in the request
         if (!currentPassword) {
             return res.status(400).json({ message: "Current password is required" });
         }
 
-        // This is where the error happens if currentPassword or user.password is missing
         const isMatch = await user.comparePassword(currentPassword);
         
         if (!isMatch) {
@@ -179,9 +174,7 @@ exports.forgotPassword = async (req, res) => {
         const resetToken = user.getResetPasswordToken();
         await user.save();
 
-        // Change this line
 const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
-        // const message = `You requested a password reset. Please click the link below to reset your password:\n\n${resetUrl}\n\nThis link will expire in 15 minutes.`;
         const message = `
   <div style="font-family: serif; border: 1px solid #e2e8f0; padding: 20px; max-width: 600px;">
     <h2 style="color: #1a1a1a; text-transform: uppercase;">Password Reset Request</h2>
@@ -207,7 +200,6 @@ const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
         res.json({ message: "Email sent successfully! Check your inbox." });
 
     } catch (err) {
-        // If email fails, don't leave the token in the DB
         const user = await User.findOne({ email: req.body.email });
         if (user) {
             user.resetPasswordToken = undefined;
@@ -220,13 +212,11 @@ const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
 exports.resetPassword = async (req, res) => {
     try {
-        // 1. Hash the token from the URL to compare with DB
         const resetToken = crypto
             .createHash('sha256')
             .update(req.params.token)
             .digest('hex');
 
-        // 2. Find user with valid token and not expired
         const user = await User.findOne({
             resetPasswordToken: resetToken,
             resetPasswordExpire: { $gt: Date.now() }
@@ -236,7 +226,6 @@ exports.resetPassword = async (req, res) => {
             return res.status(400).json({ message: "Invalid or expired reset token" });
         }
 
-        // 3. Update password (ensure it's hashed by your model's middleware)
         user.password = req.body.password;
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;

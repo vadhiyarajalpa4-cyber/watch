@@ -23,7 +23,7 @@ const userSchema = mongoose.Schema({
     },
     addresses: [
         {
-            label: { type: String, default: 'Home' }, // e.g., Home, Work, Site
+            label: { type: String, default: 'Home' }, 
             address: { type: String, required: true },
             city: { type: String, required: true },
             postalCode: { type: String, required: true },
@@ -36,16 +36,15 @@ const userSchema = mongoose.Schema({
 },{timestamps: true});
 
 userSchema.pre("save", async function () {
-    // 1. Only hash the password if it's new or being changed
     if (!this.isModified("password")) {
-        return; // Just return instead of calling next()
+        return; 
     }
 
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
     } catch (error) {
-        throw error; // Mongoose will catch this as a save error
+        throw error; 
     }
 });
 
@@ -53,7 +52,6 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Your existing token method (Correct)
 userSchema.methods.getResetPasswordToken = function () {
     const resetToken = crypto.randomBytes(20).toString("hex");
 

@@ -1,188 +1,3 @@
-// import React, { useEffect, useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-// import { CheckCircle, Truck, CreditCard, Package } from 'lucide-react';
-
-
-// const loadRazorpayScript = () => {
-//     return new Promise((resolve) => {
-//         if (window.Razorpay) {
-//             resolve(true);
-//             return;
-//         }
-//         const script = document.createElement("script");
-//         script.src = "https://checkout.razorpay.com/v1/checkout.js";
-//         script.onload = () => resolve(true);
-//         script.onerror = () => resolve(false);
-//         document.body.appendChild(script);
-//     });
-// };
-
-// const PlaceOrder = () => {
-//     const navigate = useNavigate();
-//     const [cart, setCart] = useState(null);
-//     const [paymentMethod, setPaymentMethod] = useState('COD');
-
-//     // 1. Get Data from LocalStorage
-//     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-//     const shippingAddress = JSON.parse(localStorage.getItem('shippingAddress'));
-
-//     useEffect(() => {
-//         if (!shippingAddress) {
-//             navigate('/checkout');
-//             return;
-//         }
-
-//         const fetchCart = async () => {
-//             try {
-//                 const { data } = await axios.get('http://localhost:5000/api/admin/cart', {
-//                     headers: { Authorization: `Bearer ${userInfo.token}` }
-//                 });
-//                 setCart(data);
-//             } catch (err) {
-//                 console.error("Error fetching cart for summary", err);
-//             }
-//         };
-//         fetchCart();
-//     }, [navigate, userInfo?.token, shippingAddress]);
-
-//     // 2. Calculations
-//     // const subtotal = cart?.reduce((acc, item) => acc + item.product.price * item.quantity, 0) || 0;
-//     const subtotal = cart?.reduce((acc, item) => {
-//         const price = item.price || item.product?.price || 0;
-//         return acc + (price * item.quantity);
-//     }, 0) || 0;
-//     const shippingPrice = subtotal > 5000 ? 0 : 150;
-//     const totalPrice = subtotal + shippingPrice;
-
-//     const placeOrderHandler = async () => {
-//         // 1. Prepare Order Data
-//         // const orderData = {
-//         //     user: userInfo._id || userInfo.id,
-//         //     orderItems: cart.map(item => ({
-//         //         name: item.product.name,
-//         //         quantity: item.quantity,
-//         //         image: item.product.image,
-//         //         // price: item.product.price,
-//         //         price: Number(item.price || item.product?.price || 0),
-//         //         product: item.product._id,
-//         //         brand: item.product.brand,
-//         //         style: item.product.style,
-//         //     })),
-//         //     shippingAddress: shippingAddress,
-//         //     paymentMethod: paymentMethod,
-//         //     totalPrice: totalPrice,
-//         // };
-//         const orderData = {
-//             user: userInfo._id || userInfo.id,
-//             orderItems: cart.map(item => {
-//                 console.log("DEBUG: Checking image for", item.product.name, ":", item.image);
-//                 // --- THE FIX ---
-//                 // Access the image from the item itself (since your Cart stores it)
-//                 // or fall back to the product's first variant if it's not at the root
-//                 const resolvedImage = item.image || item.product?.variants?.[0]?.image || "";
-
-//                 return {
-//                     name: item.product.name,
-//                     quantity: item.quantity,
-//                     // Use the variable that holds the actual image path
-//                     image: resolvedImage,
-//                     price: Number(item.price || item.product?.price || 0),
-//                     product: item.product._id,
-//                     brand: item.product.brand || "Standard",
-//                     style: item.product.style || "Classic",
-//                 };
-//             }),
-//             shippingAddress: shippingAddress,
-//             paymentMethod: paymentMethod,
-//             totalPrice: totalPrice,
-//         };
-
-//         const config = {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 Authorization: `Bearer ${userInfo.token}`
-//             },
-//         };
-
-//         // --- CASE 1: CASH ON DELIVERY ---
-//         if (paymentMethod === 'COD') {
-//             try {
-//                 const { data } = await axios.post('http://localhost:5000/api/orders', orderData, config);
-
-//                 // Clean up
-//                 setCart([]);
-//                 localStorage.removeItem('cartItems');
-//                 window.dispatchEvent(new Event('cartUpdate'));
-//                 navigate(`/order-success/${data._id}`);
-//             } catch (err) {
-//                 console.error("COD Error:", err);
-//                 alert(err.response?.data?.message || "Failed to place COD order.");
-//             }
-//         }
-
-//         // --- CASE 2: ONLINE PAYMENT (RAZORPAY) ---
-//         else {
-//             try {
-//                 const testAmount = totalPrice > 100000 ? 50000 : totalPrice;
-
-//                 const { data: { order } } = await axios.post(
-//                     'http://localhost:5000/api/payment/create-order',
-//                     { amount: testAmount },
-//                     config
-//                 );
-
-//                 const options = {
-//                     key: "rzp_test_SqLF34XdMtC8rp",
-//                     amount: order.amount,
-//                     currency: order.currency,
-//                     name: "Sarvoday Watch",
-//                     description: "Premium Purchase",
-//                     order_id: order.id,
-//                     handler: async (response) => {
-//                         try {
-//                             const verifyData = {
-//                                 razorpay_order_id: response.razorpay_order_id,
-//                                 razorpay_payment_id: response.razorpay_payment_id,
-//                                 razorpay_signature: response.razorpay_signature,
-//                                 orderData: orderData
-//                             };
-
-//                             const { data: successData } = await axios.post(
-//                                 'http://localhost:5000/api/payment/verify-payment',
-//                                 verifyData,
-//                                 config
-//                             );
-
-//                             if (successData.success) {
-//                                 setCart([]);
-//                                 localStorage.removeItem('cartItems');
-//                                 window.dispatchEvent(new Event('cartUpdate'));
-//                                 navigate(`/order-success/${successData.order._id}`);
-//                             }
-//                         } catch (err) {
-//                             console.error("Verification Error:", err);
-//                             alert("Payment verification failed.");
-//                         }
-//                     },
-//                     prefill: {
-//                         name: userInfo.name,
-//                         email: userInfo.email,
-//                     },
-//                     theme: { color: "#D4AF37" },
-//                 };
-
-//                 const rzp = new window.Razorpay(options);
-//                 rzp.open();
-
-//             } catch (err) {
-//                 console.error("Order process error:", err);
-//                 alert(err.response?.data?.message || "Failed to initiate payment.");
-//             }
-//         }
-//     };
-
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -196,7 +11,6 @@ const PlaceOrder = () => {
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
     const shippingAddress = JSON.parse(localStorage.getItem('shippingAddress'));
 
-    // --- Helper: Load Razorpay Script Dynamically ---
     const loadRazorpayScript = () => {
         return new Promise((resolve) => {
             if (window.Razorpay) {
@@ -238,7 +52,6 @@ const PlaceOrder = () => {
     const totalPrice = subtotal + shippingPrice;
 
     const placeOrderHandler = async () => {
-        // Prepare Order Data
         const orderData = {
             user: userInfo._id || userInfo.id,
             orderItems: cart.map(item => ({
@@ -270,7 +83,6 @@ const PlaceOrder = () => {
                 alert(err.response?.data?.message || "Failed to place COD order.");
             }
         } else {
-            // --- UPDATED: Wait for script before proceeding ---
             const isLoaded = await loadRazorpayScript();
             if (!isLoaded) {
                 alert("Payment gateway failed to load. Please check your connection.");
@@ -387,9 +199,7 @@ const PlaceOrder = () => {
                                     <div className="flex items-center gap-4">
                                         <img
                                             src={
-                                                // 1. Try to use the image from the cart item itself
                                                 item.image?.startsWith('http') ? item.image : `http://localhost:5000${item.image}`
-                                                    // 2. Fallback to the product's default image
                                                     || (item.product?.image?.startsWith('http') ? item.product.image : `http://localhost:5000${item.product?.image}`)
                                             }
                                             alt={item.product?.name || "Product"}
@@ -404,7 +214,6 @@ const PlaceOrder = () => {
                                             <p className="text-xs text-gray-400">Qty: {item.quantity}</p>
                                         </div>
                                     </div>
-                                    {/* The math now uses the fallback 'price' variable */}
                                     <p className="text-sm font-bold">₹{(Number(price) * Number(item.quantity)).toLocaleString()}</p>
                                 </div>
                             );

@@ -25,14 +25,13 @@ const Profile = () => {
 
     // Shipping States
     const [showAddressForm, setShowAddressForm] = useState(false);
-    const [editingAddressId, setEditingAddressId] = useState(null); // Track if we are updating
+    const [editingAddressId, setEditingAddressId] = useState(null);
     const [addressData, setAddressData] = useState({
         label: 'Home', address: '', city: '', postalCode: '', country: 'India', phone: ''
     });
 
     const [message, setMessage] = useState({ type: '', text: '' });
     const [currentView, setCurrentView] = useState('Profile Overview');
-    // Base URL for your new User Controller
     const USER_API_URL = 'http://localhost:5000/api/users';
 
     useEffect(() => {
@@ -45,7 +44,6 @@ const Profile = () => {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 };
 
-                // Fetch profile and orders in parallel
                 const [profileRes, ordersRes] = await Promise.all([
                     axios.get(`${USER_API_URL}/profile`, config),
                     axios.get('http://localhost:5000/api/orders/myorders', config)
@@ -112,8 +110,6 @@ const Profile = () => {
         }
     };
 
-    // --- ADDRESS LOGIC ---
-
     const handleEditAddressClick = (addr) => {
         setEditingAddressId(addr._id);
         setAddressData({
@@ -127,30 +123,6 @@ const Profile = () => {
         setShowAddressForm(true);
         window.scrollTo({ top: 400, behavior: 'smooth' });
     };
-
-    // const handleAddressSubmit = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-    //         const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-
-    //         let response;
-    //         if (editingAddressId) {
-    //             // UPDATE
-    //             response = await axios.put(`${USER_API_URL}/address/${editingAddressId}`, addressData, config);
-    //             setMessage({ type: 'success', text: 'Shipping destination updated' });
-    //         } else {
-    //             // CREATE
-    //             response = await axios.post(`${USER_API_URL}/address`, addressData, config);
-    //             setMessage({ type: 'success', text: 'New shipping destination secured' });
-    //         }
-
-    //         setUser({ ...user, addresses: response.data });
-    //         resetAddressForm();
-    //     } catch (error) {
-    //         setMessage({ type: 'error', text: 'Failed to process address' });
-    //     }
-    // };
 
     const handleAddressSubmit = async (e) => {
         e.preventDefault();
@@ -167,10 +139,8 @@ const Profile = () => {
                 setMessage({ type: 'success', text: 'New shipping destination secured' });
             }
 
-            // Updates user state with the array returned directly from your controller
             setUser({ ...user, addresses: response.data });
 
-            // Sync local storage so it reflects immediately on refresh
             if (userInfo && userInfo.user) {
                 userInfo.user.addresses = response.data;
                 localStorage.setItem('userInfo', JSON.stringify(userInfo));
@@ -228,7 +198,6 @@ const Profile = () => {
                         ))}
                     </div>
                 </div>
-                {/* Content Area */}
                 <div className="md:col-span-3 space-y-12">
 
                     {/* 1. Profile Overview View */}

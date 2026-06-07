@@ -17,22 +17,18 @@ const toggleWishlist = async (req, res) => {
             );
 
             if (itemIndex > -1) {
-                // Item exists, remove it
                 wishlist.items.splice(itemIndex, 1);
             } else {
-                // Add new item
                 wishlist.items.push({ product: productId, variantIndex: variantIndex || 0 });
             }
             await wishlist.save();
         } else {
-            // Create new wishlist if none exists
             wishlist = await Wishlist.create({ 
                 user: userId, 
                 items: [{ product: productId, variantIndex: variantIndex || 0 }] 
             });
         }
         
-        // Return the updated items array so the frontend can update its state instantly
         return res.status(200).json(wishlist.items);
         
     } catch (err) {
@@ -50,7 +46,6 @@ const getWishlistItems = async (req, res) => {
                 select: 'name mainImage mainPrice brand variants'
             });
 
-        // Return ONLY the array of items. If no wishlist exists, return an empty array.
         return res.json(wishlist ? wishlist.items : []);
     } catch (err) {
         return res.status(500).json({ message: err.message });

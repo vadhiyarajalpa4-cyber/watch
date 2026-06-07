@@ -6,10 +6,8 @@ const Footer = () => {
 
   return (
     <footer className="bg-[#1a1a1a] text-white pt-20 pb-8 border-t border-white/5">
-      {/* Container limited to max-w-5xl to prevent stretching */}
       <div className="max-w-5xl mx-auto px-6">
         
-        {/* Using justify-between to spread columns evenly */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16 text-center md:text-left">
           
           {/* Brand */}

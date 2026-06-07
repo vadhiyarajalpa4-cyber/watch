@@ -1,6 +1,6 @@
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
-const User = require("./models/user"); // Ensure the path to your model is correct
+const User = require("./models/user"); 
 const connectDB = require("./config/db");
 
 dotenv.config();
@@ -18,7 +18,6 @@ const importAdmin = async () => {
         }
         const hashedPassword = await bcrypt.hash(process.env.INITIAL_ADMIN_PASSWORD,10);
 
-        // 4. Create the Admin user
         await User.create({
             name: "Master Admin",
             email: process.env.INITIAL_ADMIN_EMAIL,

@@ -13,7 +13,7 @@ const sendEmail = async (options) => {
     from: `"Sarvoday Watch Co." <${process.env.EMAIL_USER}>`,
     to: options.email,
     subject: options.subject,
-    html: options.message, // We use HTML for that luxury look
+    html: options.message,
   };
 
   await transporter.sendMail(mailOptions);

@@ -11,44 +11,6 @@ const AdminDashboard = () => {
         rawOrders: []
     });
     const [loading, setLoading] = useState(true);
-    //     useEffect(() => {
-    //         const fetchStats = async () => {
-    //     try {
-    //         const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-    //         const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-
-    //         // Wrap these in separate try-catches or handle the 401 gracefully
-    //         const ordersRes = await axios.get('http://localhost:5000/api/orders', config);
-
-    //         let userCount = 0;
-    //         try {
-    //             const usersRes = await axios.get('http://localhost:5000/api/users', config);
-    //             userCount = usersRes.data.length;
-    //         } catch (err) {
-    //             console.error("User fetch failed, defaulting to 0", err);
-    //         }
-
-    //         const data = ordersRes.data;
-    //         const totalRevenue = data.reduce((acc, order) => acc + order.totalPrice, 0);
-    //         const pendingOrders = data.filter(order => !order.isDelivered).length;
-
-    //         setStats({
-    //             totalRevenue,
-    //             orderCount: data.length,
-    //             pendingOrders,
-    //             userCount: userCount, 
-    //             rawOrders: data
-    //         });
-    //         setLoading(false);
-    //     } catch (error) {
-    //         console.error("Critical Dashboard Error", error);
-    //         setLoading(false);
-    //     }
-    // };
-    //         fetchStats();
-    //     }, []);
-
-    // Inside your AdminDashboard component
     useEffect(() => {
         const fetchStats = async () => {
             try {
@@ -56,16 +18,14 @@ const AdminDashboard = () => {
                 const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
                 console.log("Attempting to fetch...");
-                // CHANGE THIS LINE: Point to the new unpaginated stats route
                 const { data } = await axios.get('http://localhost:5000/api/orders/stats', config);
                 console.log("Ping Response:", data);
-                // Now update the state with the returned fields
                 setStats({
                     totalRevenue: data.totalRevenue || 0,
                     orderCount: data.orderCount || 0,
                     pendingOrders: data.pendingOrders || 0,
-                    userCount: data.userCount || 0, // This will fix your "Registered Clients" count
-                    rawOrders: data.rawOrders || [] // This will fix your "Top Performing" list
+                    userCount: data.userCount || 0, 
+                    rawOrders: data.rawOrders || [] 
                 });
                 setLoading(false);
             } catch (error) {
@@ -76,12 +36,8 @@ const AdminDashboard = () => {
         fetchStats();
     }, []);
 
-    // --- ENHANCED ANALYTICS LOGIC ---
-    // --- ENHANCED ANALYTICS LOGIC ---
     const getPerformanceAnalytics = () => {
-        // Add || [] to ensure .reduce always has an array to work with
         const analytics = (stats.rawOrders || []).reduce((acc, order) => {
-            // Ensure order.orderItems exists
             (order.orderItems || []).forEach(item => {
                 const label = item.brand || (item.category && item.category.name) || 'Standard Collection';
 
@@ -101,30 +57,6 @@ const AdminDashboard = () => {
     const topPerformance = useMemo(() => {
         return getPerformanceAnalytics();
     }, [stats.rawOrders]);
-
-    // const getPerformanceAnalytics = () => {
-    //     const analytics = stats.rawOrders.reduce((acc, order) => {
-    //         order.orderItems.forEach(item => {
-    //             // 1. We move item.brand to the first position.
-    //             // 2. If brand is missing, we use category name (like Rolex).
-    //             // 3. Fallback to 'Standard Collection' if both are missing.
-    //             const label = item.brand || (item.category && item.category.name) || 'Standard Collection';
-
-    //             if (!acc[label]) {
-    //                 acc[label] = { name: label, value: 0, units: 0 };
-    //             }
-
-    //             acc[label].value += (item.price * item.quantity);
-    //             acc[label].units += item.quantity;
-    //         });
-    //         return acc;
-    //     }, {});
-
-    //     return Object.values(analytics)
-    //         .sort((a, b) => b.value - a.value);
-    // };
-
-    // const topPerformance = getPerformanceAnalytics();
 
     if (loading) return (
         <div className="p-10 font-sans text-gray-400 italic uppercase tracking-widest text-[10px] animate-pulse">
@@ -159,7 +91,7 @@ const AdminDashboard = () => {
                         <p className="text-3xl font-light">{stats.userCount}</p>
                     </div>
                     <div className="bg-blue-50 p-3 rounded-full text-blue-600">
-                        <Users size={20} /> {/* Make sure to import Users from lucide-react */}
+                        <Users size={20} /> 
                     </div>
                 </div>
 

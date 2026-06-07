@@ -6,7 +6,6 @@ const ManageCategories = () => {
     const [subCategories, setSubCategories] = useState('');
     const [categories, setCategories] = useState([]);
 
-    // --- EDIT STATES ---
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editData, setEditData] = useState({ id: '', name: '', subCategories: '' });
 

@@ -33,7 +33,6 @@ const updateCategory = async (req, res) => {
         const { id } = req.params;
         const { name, subCategories } = req.body;
 
-        // Find and update the category
         const updatedCategory = await Category.findByIdAndUpdate(
             id,
             { name, subCategories },

@@ -6,7 +6,6 @@ import { MapPin, Check, Loader2, Phone } from 'lucide-react';
 const Checkout = () => {
   const navigate = useNavigate();
 
-  // Form States
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
@@ -14,7 +13,6 @@ const Checkout = () => {
   const [phone, setPhone] = useState(''); // NEW: Phone state
   const [shouldSave, setShouldSave] = useState(true);
 
-  // Data States
   const [cartItems, setCartItems] = useState([]);
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
@@ -34,7 +32,6 @@ const Checkout = () => {
         const { data: userData } = await axios.get('http://localhost:5000/api/users/profile', config);
         setSavedAddresses(userData.addresses || []);
 
-        // Pre-fill phone from profile if available
         if (userData.phone) setPhone(userData.phone);
       } catch (err) {
         console.error("Error fetching checkout data:", err.response?.data?.message || err.message);
@@ -48,14 +45,10 @@ const Checkout = () => {
     setCity(addr.city);
     setPostalCode(addr.postalCode);
     setCountry(addr.country);
-    setPhone(addr.phone || phone); // Use address phone or keep current
+    setPhone(addr.phone || phone);
     setSelectedAddressId(addr._id);
   };
 
-  // const subtotal = cartItems.reduce((acc, item) => {
-  //   const price = item.product?.price || 0;
-  //   return acc + price * item.quantity;
-  // }, 0);
   const subtotal = cartItems.reduce((acc, item) => {
     const price = item.price || item.product?.price || 0;
     return acc + (price * item.quantity);
@@ -82,16 +75,13 @@ const totalPrice = subtotal + shippingPrice;
     };
 
     try {
-      // 1. Store locally for use by the PlaceOrder screen template
       localStorage.setItem('shippingAddress', JSON.stringify(shippingAddress));
       localStorage.setItem('orderSummary', JSON.stringify({ subtotal, shippingPrice, totalPrice }));
 
-      // 2. Safely sync to database vault if the user requested it
       if (shouldSave && !selectedAddressId) {
         const userInfo = JSON.parse(localStorage.getItem('userInfo'));
         const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
-        // Payload data to match what addAddress expects
         const backendAddressPayload = {
           label: 'Home',
           address,
@@ -101,7 +91,6 @@ const totalPrice = subtotal + shippingPrice;
           phone
         };
 
-        // 🎯 CAPTURE RESPONSE: Grab the freshly updated address array from backend
         const { data: updatedAddressesArray } = await axios.post(
           'http://localhost:5000/api/users/address',
           backendAddressPayload,
@@ -110,19 +99,15 @@ const totalPrice = subtotal + shippingPrice;
 
         console.log("✅ Address successfully saved to user vault!");
 
-        // 🎯 SYNC STATE CACHE: Keep localStorage updated immediately
         if (userInfo) {
-          // If your userInfo nests profile elements inside a .user property block:
           if (userInfo.user) {
             userInfo.user.addresses = updatedAddressesArray;
           } else {
-            // If your userInfo object has a flat structure:
             userInfo.addresses = updatedAddressesArray;
           }
           localStorage.setItem('userInfo', JSON.stringify(userInfo));
         }
 
-        // Inform other tracking listeners (Navbar components, etc.) that user state updated
         window.dispatchEvent(new Event("userUpdate"));
       }
 
@@ -190,7 +175,6 @@ const totalPrice = subtotal + shippingPrice;
               </div>
             </div>
 
-            {/* NEW: Phone Field */}
             <div>
               <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Contact Number</label>
               <div className="flex items-center border-b border-gray-200">
@@ -213,7 +197,6 @@ const totalPrice = subtotal + shippingPrice;
               </div>
             )}
 
-            {/* 🔥 UPDATED SUBMIT BUTTON: Added styling enhancements for disabled state and dynamic processing text */}
             <button
               type="submit"
               disabled={loading}
@@ -255,12 +238,6 @@ const totalPrice = subtotal + shippingPrice;
                   Add ₹{(5000 - subtotal).toLocaleString()} more for free shipping
                 </p>
               )}
-              {/* <div className="flex justify-between text-gray-600">
-                <span className="text-[10px] uppercase tracking-widest">Shipping</span>
-                <span className={`font-bold ${shippingPrice === 0 ? 'text-green-600' : ''}`}>
-                  {shippingPrice === 0 ? 'FREE' : `₹${shippingPrice}`}
-                </span>
-              </div> */}
               <div className="border-t border-gray-200 pt-6 flex justify-between items-baseline font-bold">
                 <span className="text-[10px] uppercase tracking-widest">Total</span>
                 <span className="text-xl font-light">₹{totalPrice.toLocaleString()}</span>

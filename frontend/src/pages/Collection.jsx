@@ -11,25 +11,16 @@ const Collection = () => {
     const navigate = useNavigate();
     const displayProducts = products;
 
-
     const [activeStyle, setActiveStyle] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [favorites, setFavorites] = useState([]);
-
-    // const productList = productData?.products || [];
-
-    // console.log("FULL PRODUCT DATA OBJECT:", productData);
-    // Sync Favorites with Database on Mount
     useEffect(() => {
-        // Get the ID of the selected category
         const categoryId = selectedCategory ? selectedCategory._id : '';
 
-        // Pass the categoryId, activeStyle, and searchQuery to the context
         fetchProducts(currentPage, 8, categoryId, activeStyle, searchQuery);
 
     }, [currentPage, categoryName, activeStyle, searchQuery]);
 
-    // Reset to page 1 when category changes
     useEffect(() => {
         setCurrentPage(1);
     }, [categoryName, activeStyle]);
@@ -44,9 +35,6 @@ const Collection = () => {
             const { data } = await axios.get(`http://localhost:5000/api/admin/wishlist?t=${Date.now()}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
-            // FIX: data is now [ {product: {...}, variantIndex: 0}, ... ]
-            // Extract the product ID from each item and convert to string
             const likedIds = Array.isArray(data) 
                 ? data.map(item => item.product?._id?.toString() || item.product?.toString()) 
                 : [];
@@ -78,21 +66,15 @@ const Collection = () => {
             ? favorites.filter(id => id !== productId)
             : [...favorites, productId];
 
-        // 2. Update state immediately
         setFavorites(newFavorites);
 
         try {
-            // 3. Sync with Backend
             await axios.post('http://localhost:5000/api/admin/wishlist/toggle',
                 { productId, variantIndex: 0 },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            // 4. Trigger Navbar update
             window.dispatchEvent(new Event('wishlistUpdate'));
-
-            // Optional: Re-fetch entire list to ensure absolute truth
-            // This ensures if there's a discrepancy, the UI corrects itself instantly
             const { data } = await axios.get('http://localhost:5000/api/admin/wishlist', {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -155,7 +137,7 @@ const Collection = () => {
                         <button
                             onClick={() => {
                                 setActiveStyle('All');
-                                setCurrentPage(1); // Reset to page 1
+                                setCurrentPage(1); 
                             }}
                             className={`text-xs uppercase tracking-[0.2em] pb-2 ${activeStyle === 'All' ? 'text-[#D4AF37] border-b-2 border-[#D4AF37]' : 'text-gray-400'}`}
                         >

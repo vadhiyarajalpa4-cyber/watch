@@ -21,7 +21,6 @@ const ManageOrders = () => {
       const userInfo = JSON.parse(localStorage.getItem('userInfo'));
       const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
-      // Pass query params to the backend
       const { data } = await axios.get(
         `http://localhost:5000/api/orders?page=${page}&limit=${itemsPerPage}`,
         config
@@ -38,7 +37,6 @@ const ManageOrders = () => {
     }
   };
 
-  // 3. Update your initial load
   useEffect(() => {
     fetchAllOrders(1);
   }, []);

@@ -11,7 +11,6 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Point this to your backend route
       await axios.post('http://localhost:5000/api/contact', formData);
       setSent(true);
       setFormData({ name: '', email: '', subject: '', message: '' });
@@ -56,14 +55,6 @@ const Contact = () => {
               </div>
             </div>
           </div>
-
-          {/* Optional: Embed a Google Map here */}
-          {/* <div className="h-64 bg-gray-100 grayscale opacity-80 hover:grayscale-0 transition-all duration-700"> */}
-             {/* Map Placeholder */}
-             {/* <div className="w-full h-full flex items-center justify-center text-gray-400 text-[10px] tracking-widest uppercase italic">
-                Interactive Map View
-             </div>
-          </div> */}
         </div>
 
         {/* Contact Form */}

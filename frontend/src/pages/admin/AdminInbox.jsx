@@ -6,7 +6,6 @@ const AdminInbox = () => {
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Modal States
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [replyText, setReplyText] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
@@ -59,7 +58,6 @@ const AdminInbox = () => {
     }
   };
 
-  // ✉️ Handle Submitting the Reply via Modal
   const handleSendReply = async (e) => {
     e.preventDefault();
     setSendingReply(true);
@@ -67,10 +65,8 @@ const AdminInbox = () => {
       const config = getAuthConfig();
       await axios.post(`http://localhost:5000/api/contact/${selectedInquiry._id}/reply`, { replyMessage: replyText }, config);
 
-      // Update local state to show it's now resolved
       setInquiries(prev => prev.map(msg => msg._id === selectedInquiry._id ? { ...msg, status: 'Resolved' } : msg));
 
-      // Close Modal & Reset
       setSelectedInquiry(null);
       setReplyText('');
       alert("Reply sent successfully from Sarvoday Account!");

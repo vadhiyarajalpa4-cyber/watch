@@ -9,32 +9,9 @@ export const WatchProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1, totalProducts: 0 });
-
-//     const fetchProducts = async (page = 1, limit = 8, style = 'All', search = '') => {
-//     try {
-//         setLoading(true);
-//         // Build the URL with optional filters
-//         const styleQuery = style !== 'All' ? `&style=${style}` : '';
-//         const searchQuery = search ? `&search=${search}` : '';
-        
-//         const res = await API.get(`/api/admin/products?page=${page}&limit=${limit}${styleQuery}${searchQuery}`);
-        
-//         setProducts(res.data.products);
-//         setPagination({
-//             currentPage: res.data.currentPage,
-//             totalPages: res.data.totalPages,
-//             totalProducts: res.data.totalProducts
-//         });
-//         setLoading(false);
-//     } catch (err) {
-//         setLoading(false);
-//     }
-// };
-
-const fetchProducts = async (page = 1, limit = 8, categoryId = '', style = 'All', search = '') => {
+    const fetchProducts = async (page = 1, limit = 8, categoryId = '', style = 'All', search = '') => {
     try {
         setLoading(true);
-        // Build the query string dynamically
         let url = `/api/admin/products?page=${page}&limit=${limit}`;
         if (categoryId) url += `&category=${categoryId}`;
         // if (style && style !== 'All') url += `&style=${style}`;
@@ -78,7 +55,6 @@ const fetchProducts = async (page = 1, limit = 8, categoryId = '', style = 'All'
         refreshData();
     }, []);
 
-    // The line below was causing the error because of the .js extension
     return (
         <WatchContext.Provider value={{ categories, products, loading, pagination, fetchProducts, refreshData }}>
             {children}

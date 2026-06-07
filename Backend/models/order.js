@@ -32,22 +32,20 @@ const orderSchema = mongoose.Schema({
     paymentMethod: { 
         type: String, 
         required: true, 
-        enum: ['COD', 'Online'], // Restrict to these two types
+        enum: ['COD', 'Online'],
         default: 'COD' 
     },
     paymentResult: {
-        // Storing Razorpay response details for security/reference
-        id: { type: String }, // Razorpay Payment ID
+        id: { type: String },
         status: { type: String },
         update_time: { type: String },
         email_address: { type: String },
     },
     razorpayOrderId: {
-        type: String, // To link with your backend created order
+        type: String, 
     },
     totalPrice: { type: Number, required: true, default: 0.0 },
     
-    // Status Trackers
     isPaid: { type: Boolean, required: true, default: false },
     paidAt: { type: Date },
     isShipped: {

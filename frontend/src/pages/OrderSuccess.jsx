@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { CheckCircle, Package, ArrowRight, ShoppingBag } from 'lucide-react';
 
 const OrderSuccess = () => {
-  const { id } = useParams(); // Get the order ID from the URL
+  const { id } = useParams(); 
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-6 pt-20">

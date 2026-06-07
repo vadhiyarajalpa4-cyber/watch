@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const ResetPassword = () => {
-    const { token } = useParams(); // Gets the token from the URL
+    const { token } = useParams();
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -15,10 +15,9 @@ const ResetPassword = () => {
 
         setLoading(true);
         try {
-            // This calls the PUT route we discussed earlier
             await axios.put(`http://localhost:5000/auth/api/reset-password/${token}`, { password });
             alert("Password updated successfully!");
-            navigate('/login'); // Send them back to login
+            navigate('/login'); 
         } catch (err) {
             alert(err.response?.data?.message || "Invalid or expired token");
         }

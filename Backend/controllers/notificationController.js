@@ -1,6 +1,5 @@
 const Notification = require("../models/notification");
 
-// 1. Get all notifications for the logged-in user/admin
 exports.getNotifications = async (req, res) => {
     try {
         const notifications = await Notification.find({ recipient: req.user._id })
@@ -12,25 +11,11 @@ exports.getNotifications = async (req, res) => {
     }
 };
 
-// 2. Mark specific category as read (e.g., when you click 'Registered Clients')
-// exports.markCategoryAsRead = async (req, res) => {
-//     try {
-//         const { type } = req.body; // e.g., 'NEW_USER' or 'NEW_ORDER'
-//         await Notification.updateMany(
-//             { recipient: req.user._id, type: type, isRead: false },
-//             { $set: { isRead: true } }
-//         );
-//         res.json({ message: `${type} notifications marked as read` });
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
-// Inside your backend notificationController.js
+
 exports.markCategoryAsRead = async (req, res) => {
     try {
-        const { type } = req.body; // e.g., 'NEW_ORDER'
+        const { type } = req.body;
         
-        // Match how your data actually looks: find the active 'true' entries and flip them to 'false'
         const result = await Notification.updateMany(
             { recipient: req.user._id, type: type, isRead: true }, 
             { $set: { isRead: false } }

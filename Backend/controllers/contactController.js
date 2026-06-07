@@ -7,7 +7,6 @@ exports.createInquiry = async (req, res) => {
     const { name, email, subject, message } = req.body;
 
     try {
-        // 1. Save inquiry to MongoDB
         const inquiry = await Contact.create({
             name,
             email,
@@ -15,7 +14,6 @@ exports.createInquiry = async (req, res) => {
             message
         });
 
-        // 2. Notify Admin
         const admin = await User.findOne({ isAdmin: true });
         if (admin) {
             await Notification.create({
@@ -103,7 +101,6 @@ exports.replyToInquiry = async (req, res) => {
             return res.status(404).json({ message: "Inquiry not found" });
         }
 
-        // Send the email
         await sendEmail({
             email: inquiry.email,
             subject: `Re: ${inquiry.subject} - Sarvoday Watch Store`,
@@ -125,7 +122,6 @@ exports.replyToInquiry = async (req, res) => {
             `
         });
 
-        // Automatically mark the inquiry as Resolved
         inquiry.status = "Resolved";
         await inquiry.save();
 
