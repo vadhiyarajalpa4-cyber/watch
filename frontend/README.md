@@ -1,16 +1,30 @@
-# React + Vite
+# CodeAlpha_SarvodayWatch
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a full-stack E-commerce web application developed as part of my internship at CodeAlpha.
 
-Currently, two official plugins are available:
+## Project Description
+Sarvoday Watch is a modern, responsive marketplace designed for premium timepieces. The application features a robust admin dashboard that allows for real-time inventory management, including specific product variants, pricing, and stock alerts.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Key Features
+- **Responsive E-commerce Interface:** A clean, modern UI for browsing luxury timepieces.
+- **Variant-Centric Inventory:** Ability to manage colors, prices, and stock counts per item.
+- **Admin Dashboard:** A dedicated management view with 'Low Stock' notifications to streamline inventory operations.
+- **Modern Tech Stack:** Built using the MERN stack (MongoDB, Express.js, React, Node.js).
 
-## React Compiler
+## Technologies Used
+- **Frontend:** React.js, Tailwind CSS, Vite
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB
+- **Version Control:** Git & GitHub
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## How to Run the Project
+1. **Clone the repository:**
+   `git clone https://github.com/priyanshi-abcd/CodeAlpha_SarvodayWatch.git`
+2. **Setup Frontend:**
+   - `cd frontend`
+   - `npm install`
+   - `npm run dev`
+3. **Setup Backend:**
+   - `cd backend`
+   - `npm install`
+   - `npm start`
