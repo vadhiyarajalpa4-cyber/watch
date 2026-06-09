@@ -21,19 +21,19 @@ Sarvoday Watch is a modern, responsive marketplace designed for premium timepiec
 
 Before starting the backend server, create a `.env` file inside the `Backend/` directory and configure the following variables with your own local values:
 
-```env
+env
 PORT = 5000
 MONGO_URI = mongodb://127.0.0.1:27017/Sarvoday-Watch
 JWT_SECRET = your_private_jwt_secret_string
 
 ## How to Run the Project
 1. **Clone the repository:**
-   `git clone https://github.com/priyanshi-abcd/CodeAlpha_SarvodayWatch.git`
+   git clone https://github.com/priyanshi-abcd/CodeAlpha_SarvodayWatch.git
 2. **Setup Frontend:**
-   - `cd frontend`
-   - `npm install`
-   - `npm run dev`
+   - cd frontend
+   - npm install
+   - npm run dev
 3. **Setup Backend:**
-   - `cd Backend`
-   - `npm install`
-   - `npm start`
+   - cd Backend
+   - npm install
+   - npm start
